@@ -1,0 +1,43 @@
+<launch>
+  <arg name="camera" default="camera"/>
+  <arg name="cmd_vel_topic" default="/cmd_vel_mux/input/navi"/>
+  <arg name="launch_camera" default="true"/>
+  <arg name="launch_base" default="true"/>
+  <arg name="invert_linear" default="true"/>
+
+  <group if="$(arg launch_base)">
+    <include file="$(find turtlebot_bringup)/launch/minimal.launch"/>
+  </group>
+
+  <group if="$(arg launch_camera)">
+    <include file="$(find freenect_launch)/launch/freenect.launch">
+      <arg name="camera" value="$(arg camera)"/>
+      <arg name="depth_registration" value="true"/>
+      <arg name="rgb_processing" value="true"/>
+      <arg name="depth_processing" value="true"/>
+      <arg name="depth_registered_processing" value="true"/>
+    </include>
+  </group>
+
+  <node pkg="vision_perception_tasks" type="person_detector.py" name="person_detector" output="screen" respawn="true">
+    <param name="image_topic" value="/$(arg camera)/rgb/image_raw"/>
+    <param name="publish_debug" value="true"/>
+    <param name="person_topic" value="/vision/person_target"/>
+  </node>
+
+  <node pkg="vision_motion_tasks" type="person_follow_controller.py" name="person_follow_controller" output="screen" respawn="true">
+    <param name="person_topic" value="/vision/person_target"/>
+    <param name="depth_topic" value="/$(arg camera)/depth_registered/image_raw"/>
+    <param name="cmd_vel_topic" value="$(arg cmd_vel_topic)"/>
+    <param name="pid_topic" value="pid"/>
+    <param name="pid_back_topic" value="pid_back"/>
+    <param name="start_enabled" value="true"/>
+    <param name="invert_linear" value="$(arg invert_linear)"/>
+    <param name="min_lin" value="0.10"/>
+    <param name="max_lin" value="0.35"/>
+    <param name="kp_lin" value="0.9"/>
+    <param name="target_bbox_h_ratio" value="0.42"/>
+    <param name="stop_bbox_h_ratio" value="0.52"/>
+    <param name="kp_bbox" value="1.0"/>
+  </node>
+</launch>

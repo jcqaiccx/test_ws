@@ -1,0 +1,21 @@
+<package format="2">
+  <name>vision_perception_tasks</name>
+  <version>0.1.0</version>
+  <description>Perception nodes for person and object detection in competition tasks</description>
+  <maintainer email="jcq@todo.todo">jcq</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>cv_bridge</build_depend>
+
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>cv_bridge</exec_depend>
+
+  <export/>
+</package>

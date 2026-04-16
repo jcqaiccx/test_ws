@@ -1,0 +1,44 @@
+<launch>
+  <!-- Laser sensor -->
+  <arg name="laser_sensor" default="$(env TURTLEBOT_LASER_SENSOR)"/>  <!-- ms200 -->
+
+  <!-- Laser driver -->
+  <include file="$(find turtlebot_navigation)/laser/$(arg laser_sensor)_scan.launch" />
+
+  <!-- Static transform publisher (base_link to laser) -->
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser"
+        args="0.0435 5.258E-05 0.11 3.1416 0 0 /base_link /laser 30"/>
+
+  <!-- Map server, publish to global /map -->
+  <arg name="map_file" default="$(env TURTLEBOT_MAP_FILE)"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
+    <param name="frame_id" value="map" />
+    <remap from="map" to="/map" /> <!-- Ensure map is published to global /map -->
+  </node>
+
+  <!-- AMCL -->
+  <arg name="custom_amcl_launch_file" default="$(find turtlebot_navigation)/launch/includes/amcl/$(arg laser_sensor)_amcl.launch.xml"/>
+  <arg name="initial_pose_x" default="0.0"/>
+  <arg name="initial_pose_y" default="0.0"/>
+  <arg name="initial_pose_a" default="0.0"/>
+  <include file="$(arg custom_amcl_launch_file)">
+    <arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
+    <arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
+    <arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
+    <!-- Remap map topic to global /map -->
+    <remap from="/map" to="/map" />
+    <!-- If scan or odom are in navigation_phase, add remaps -->
+    <!-- <remap from="/scan" to="/navigation_phase/scan" /> -->
+    <!-- <remap from="/odom" to="/navigation_phase/odom" /> -->
+  </include>
+
+  <!-- Move base -->
+  <arg name="custom_param_file" default="$(find turtlebot_navigation)/param/$(arg laser_sensor)_costmap_params.yaml"/>
+  <include file="$(find turtlebot_navigation)/launch/includes/move_base.launch.xml">
+    <arg name="custom_param_file" value="$(arg custom_param_file)"/>
+    <!-- Remap map topic to global /map -->
+    <remap from="/map" to="/map" />
+    <!-- If scan is in navigation_phase, add remap -->
+    <!-- <remap from="/scan" to="/navigation_phase/scan" /> -->
+  </include>
+</launch>

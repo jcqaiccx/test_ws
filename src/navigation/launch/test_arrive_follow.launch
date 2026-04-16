@@ -1,0 +1,54 @@
+<launch>
+  <arg name="camera" default="camera"/>
+  <arg name="3d_sensor" default="kinect"/>
+  <arg name="goal_x" default="1.0"/>
+  <arg name="goal_y" default="0.0"/>
+  <arg name="goal_yaw" default="0.0"/>
+  <arg name="home_x" default="0.0"/>
+  <arg name="home_y" default="0.0"/>
+  <arg name="home_yaw" default="0.0"/>
+  <arg name="map_file" default="$(env HOME)/catkin_ws/src/navigation/maps/online_map"/>
+  <arg name="auto_start" default="false"/>
+  <arg name="publish_initial_pose_on_start" default="false"/>
+  <arg name="stop_mapping_after_goal" default="true"/>
+  <arg name="use_kinect_scan" default="true"/>
+
+  <include file="$(find turtlebot_bringup)/launch/minimal.launch" />
+
+  <group if="$(arg use_kinect_scan)">
+    <include file="$(find turtlebot_bringup)/launch/3dsensor.launch">
+      <arg name="camera" value="$(arg camera)"/>
+      <arg name="3d_sensor" value="$(arg 3d_sensor)"/>
+      <arg name="publish_tf" value="false"/>
+      <arg name="scan_topic" value="/scan"/>
+    </include>
+  </group>
+
+  <node pkg="turtlebot_navigation" type="laser_footprint_filter" name="laser_filter" output="screen" />
+
+  <include file="$(find turtlebot_navigation)/launch/includes/gmapping/gmapping.launch.xml">
+    <arg name="scan_topic" value="/scan_filtered"/>
+    <arg name="base_frame" value="base_footprint"/>
+    <arg name="odom_frame" value="odom"/>
+  </include>
+
+  <include file="$(find turtlebot_navigation)/launch/includes/move_base.launch.xml">
+    <arg name="odom_topic" value="odom"/>
+    <arg name="laser_topic" value="/scan_filtered"/>
+  </include>
+
+  <include file="$(find turtlebot_rviz_launchers)/launch/view_navigation.launch" />
+
+  <node pkg="navigation" type="test_arrive_follow.py" name="navigation_controller" output="screen">
+    <param name="goal_x" value="$(arg goal_x)"/>
+    <param name="goal_y" value="$(arg goal_y)"/>
+    <param name="goal_yaw" value="$(arg goal_yaw)"/>
+    <param name="home_x" value="$(arg home_x)"/>
+    <param name="home_y" value="$(arg home_y)"/>
+    <param name="home_yaw" value="$(arg home_yaw)"/>
+    <param name="map_base_path" value="$(arg map_file)"/>
+    <param name="auto_start" value="$(arg auto_start)"/>
+    <param name="publish_initial_pose_on_start" value="$(arg publish_initial_pose_on_start)"/>
+    <param name="stop_mapping_after_goal" value="$(arg stop_mapping_after_goal)"/>
+  </node>
+</launch>

@@ -1,0 +1,19 @@
+<launch>
+  <!-- laser sensor -->
+  <arg name="laser_sensor" default="ms200"/>  <!-- ms200 -->
+  
+  <!-- laser driver -->
+  <include file="$(find turtlebot_navigation)/laser/$(arg laser_sensor)_scan.launch" />
+  
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser"
+        args="0.0435 5.258E-05 0.11 3.1416 0 0  /base_link /laser 30"/>
+
+  <!-- Gmapping -->
+  <arg name="custom_gmapping_launch_file" default="$(find turtlebot_navigation)/launch/includes/gmapping/$(arg laser_sensor)_gmapping.launch.xml"/>
+  <include file="$(arg custom_gmapping_launch_file)"/>
+
+  <!-- Move base -->
+  <include file="$(find turtlebot_navigation)/launch/includes/move_base.launch.xml"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find oradar_lidar)/rviz/oradar_scan.rviz" />
+
+</launch>

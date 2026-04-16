@@ -1,0 +1,42 @@
+<launch>
+  <arg name="camera" default="camera"/>
+  <arg name="3d_sensor" default="kinect"/>
+  <arg name="use_kinect_scan" default="true"/>
+  <arg name="goal_x" default="1.0"/>
+  <arg name="goal_y" default="0.0"/>
+  <arg name="goal_yaw" default="0.0"/>
+  <arg name="home_x" default="0.0"/>
+  <arg name="home_y" default="0.0"/>
+  <arg name="home_yaw" default="0.0"/>
+  <arg name="map_file" default="$(env HOME)/catkin_ws/src/navigation/maps/online_map"/>
+  <arg name="publish_debug" default="true"/>
+  <arg name="cmd_vel_topic" default="/cmd_vel_mux/input/navi"/>
+
+  <!-- Core robot + map + move_base + navigation controller -->
+  <include file="$(find navigation)/launch/test_arrive_follow.launch">
+    <arg name="camera" value="$(arg camera)"/>
+    <arg name="3d_sensor" value="$(arg 3d_sensor)"/>
+    <arg name="use_kinect_scan" value="$(arg use_kinect_scan)"/>
+    <arg name="goal_x" value="$(arg goal_x)"/>
+    <arg name="goal_y" value="$(arg goal_y)"/>
+    <arg name="goal_yaw" value="$(arg goal_yaw)"/>
+    <arg name="home_x" value="$(arg home_x)"/>
+    <arg name="home_y" value="$(arg home_y)"/>
+    <arg name="home_yaw" value="$(arg home_yaw)"/>
+    <arg name="map_file" value="$(arg map_file)"/>
+    <arg name="auto_start" value="false"/>
+    <arg name="publish_initial_pose_on_start" value="false"/>
+    <arg name="stop_mapping_after_goal" value="true"/>
+  </include>
+
+  <!-- Central task coordinator -->
+  <node pkg="navigation" type="General.py" name="general_controller" output="screen"/>
+
+  <!-- Vision perception + motion control -->
+  <include file="$(find vision_motion_tasks)/launch/vision_tasks_all.launch">
+    <arg name="image_topic" value="/$(arg camera)/rgb/image_color"/>
+    <arg name="depth_topic" value="/$(arg camera)/depth/image_raw"/>
+    <arg name="cmd_vel_topic" value="$(arg cmd_vel_topic)"/>
+    <arg name="publish_debug" value="$(arg publish_debug)"/>
+  </include>
+</launch>

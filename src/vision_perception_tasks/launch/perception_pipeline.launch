@@ -1,0 +1,18 @@
+<launch>
+  <arg name="image_topic" default="/camera/rgb/image_color"/>
+  <arg name="publish_debug" default="true"/>
+
+  <node pkg="vision_perception_tasks" type="person_detector.py" name="person_detector" output="screen">
+    <param name="image_topic" value="$(arg image_topic)"/>
+    <param name="publish_debug" value="$(arg publish_debug)"/>
+    <param name="person_topic" value="/vision/person_target"/>
+  </node>
+
+  <node pkg="vision_perception_tasks" type="object_shelf_detector.py" name="object_shelf_detector" output="screen">
+    <param name="image_topic" value="$(arg image_topic)"/>
+    <param name="publish_debug" value="$(arg publish_debug)"/>
+    <param name="object_topic" value="/vision/object_detections"/>
+    <param name="vision_back_topic" value="vision_back"/>
+    <param name="target_classes" value="bottle,chair,tvmonitor,pottedplant"/>
+  </node>
+</launch>

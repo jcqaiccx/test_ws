@@ -1,0 +1,17 @@
+<launch>
+  <arg name="image_topic" default="/camera/rgb/image_color"/>
+  <arg name="depth_topic" default="/camera/depth/image_raw"/>
+  <arg name="cmd_vel_topic" default="/cmd_vel_mux/input/navi"/>
+  <arg name="publish_debug" default="true"/>
+
+  <include file="$(find vision_perception_tasks)/launch/perception_pipeline.launch">
+    <arg name="image_topic" value="$(arg image_topic)"/>
+    <arg name="publish_debug" value="$(arg publish_debug)"/>
+  </include>
+
+  <include file="$(find vision_motion_tasks)/launch/motion_pipeline.launch">
+    <arg name="person_topic" value="/vision/person_target"/>
+    <arg name="depth_topic" value="$(arg depth_topic)"/>
+    <arg name="cmd_vel_topic" value="$(arg cmd_vel_topic)"/>
+  </include>
+</launch>

@@ -1,0 +1,20 @@
+<launch>
+  <arg name="cmd_vel_topic" default="/cmd_vel_mux/input/navi"/>
+  <arg name="person_topic" default="/vision/person_target"/>
+  <arg name="depth_topic" default="/camera/depth/image_raw"/>
+
+  <node pkg="vision_motion_tasks" type="gaze_controller.py" name="gaze_controller" output="screen">
+    <param name="person_topic" value="$(arg person_topic)"/>
+    <param name="cmd_vel_topic" value="$(arg cmd_vel_topic)"/>
+    <param name="vision_cmd_topic" value="vision"/>
+    <param name="vision_back_topic" value="vision_back"/>
+  </node>
+
+  <node pkg="vision_motion_tasks" type="person_follow_controller.py" name="person_follow_controller" output="screen">
+    <param name="person_topic" value="$(arg person_topic)"/>
+    <param name="depth_topic" value="$(arg depth_topic)"/>
+    <param name="cmd_vel_topic" value="$(arg cmd_vel_topic)"/>
+    <param name="pid_topic" value="pid"/>
+    <param name="pid_back_topic" value="pid_back"/>
+  </node>
+</launch>

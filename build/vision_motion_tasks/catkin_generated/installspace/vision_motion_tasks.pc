@@ -1,0 +1,8 @@
+prefix=/home/jcq/catkin_ws/install
+
+Name: vision_motion_tasks
+Description: Description of vision_motion_tasks
+Version: 0.1.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

@@ -1,0 +1,19 @@
+<launch>
+  <arg name="camera" default="camera"/>
+  <arg name="cmd_vel_topic" default="/cmd_vel_mux/input/navi"/>
+  <arg name="publish_debug" default="true"/>
+
+  <include file="$(find freenect_launch)/launch/freenect.launch">
+    <arg name="camera" value="$(arg camera)"/>
+    <arg name="depth_registration" value="false"/>
+    <arg name="rgb_processing" value="true"/>
+    <arg name="depth_processing" value="true"/>
+  </include>
+
+  <include file="$(find vision_motion_tasks)/launch/vision_tasks_all.launch">
+    <arg name="image_topic" value="/$(arg camera)/rgb/image_color"/>
+    <arg name="depth_topic" value="/$(arg camera)/depth/image_raw"/>
+    <arg name="cmd_vel_topic" value="$(arg cmd_vel_topic)"/>
+    <arg name="publish_debug" value="$(arg publish_debug)"/>
+  </include>
+</launch>

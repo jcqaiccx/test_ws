@@ -1,0 +1,8 @@
+prefix=/home/jcq/catkin_ws/devel
+
+Name: yocs_controllers
+Description: Description of yocs_controllers
+Version: 0.12.1
+Cflags: -I/home/jcq/catkin_ws/src/yocs_controllers/include
+Libs: -L${prefix}/lib 
+Requires: roscpp
