@@ -1,0 +1,12 @@
+<launch>
+  <arg name="rgb_topic" default="/camera/rgb/image_raw" />
+  <arg name="camera_info_topic" default="/camera/rgb/camera_info" />
+
+  <node pkg="rcj_home" type="person_tracker.py" name="person_tracker" output="screen">
+    <param name="publish_rate" value="10" />
+    <param name="min_confidence" value="0.4" />
+    <param name="door_roi" value="[0.65, 0.25, 0.35, 0.50]" />
+    <param name="rgb_topic" value="$(arg rgb_topic)" />
+    <param name="camera_info_topic" value="$(arg camera_info_topic)" />
+  </node>
+</launch>

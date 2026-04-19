@@ -1,0 +1,8 @@
+<launch>
+  <node pkg="robot_voice" type="tts_subscribe" name="tts_subscribe" output="screen" />
+  <node pkg="robot_voice" type="iat_publish" name="iat_publish" output="screen" />
+  <node pkg="rcj_home" type="hri_task_manager.py" name="hri_task_manager" output="screen">
+    <param name="voice_timeout" value="12" />
+    <param name="loop_hz" value="2" />
+  </node>
+</launch>
